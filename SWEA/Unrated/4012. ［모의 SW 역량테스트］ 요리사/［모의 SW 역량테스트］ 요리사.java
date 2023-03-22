@@ -16,8 +16,6 @@ public class Solution {
 			N = sc.nextInt();
 			selIngredient = new boolean[N];
 			synergy = new int[N][N];
-			Asynergy = 0;
-			Bsynergy = 0;
 			min = Integer.MAX_VALUE;
 			
 			for(int i = 0; i < N; i++)
