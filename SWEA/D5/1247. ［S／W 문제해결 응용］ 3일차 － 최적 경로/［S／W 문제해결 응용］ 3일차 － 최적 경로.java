@@ -49,8 +49,10 @@ public class Solution {
 					}
 				}
 				distance += x + y;
+                if(distance > min) return;
 			}
 			min = Math.min(min, distance);
+            return;
 		}
 		
 		for(int i = 0; i < N; i++) {
