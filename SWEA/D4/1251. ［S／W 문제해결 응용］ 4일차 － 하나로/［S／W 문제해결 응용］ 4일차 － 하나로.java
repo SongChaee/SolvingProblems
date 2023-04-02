@@ -1,11 +1,11 @@
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
+import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Scanner;
 
 public class Solution {
-	static int[] p;
 	static double[][] loca;
-	static double[][] dist;
 	
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
@@ -22,56 +22,56 @@ public class Solution {
 			
 			double tax = sc.nextDouble();
 			
-			int E = V * (V - 1) / 2;
-			int index = 0;
-			dist = new double[E][3];
+			List<Edge>[] adjList = new ArrayList[V];
+			
+			for(int i = 0; i < V; i++)
+				adjList[i] = new ArrayList<>();
+			
 			for(int i = 0; i < V; i++) {
 				for(int j = i + 1; j < V; j++) {
 					double price = tax * (double) (Math.pow(loca[j][0] - loca[i][0], 2) + Math.pow(loca[j][1] - loca[i][1], 2));
-					dist[index][0] = i;
-					dist[index][1] = j;
-					dist[index][2] = price;
-					index++;
+					adjList[i].add(new Edge(i, j, price));
+					adjList[j].add(new Edge(j, i, price));
 				}
 			}
 			
-			Arrays.sort(dist, new Comparator<double[]>() {
-				public int compare(double[] o1, double[] o2) {
-					return Double.compare(o1[2], o2[2]);
-				}
-			});
-			
-			p = new int[V];
-			for(int i = 0; i < V; i++)
-				p[i] = i;
+			boolean[] visited = new boolean[V];
+			PriorityQueue<Edge> pq = new PriorityQueue<>();
+			//visited[0] = true;
+			pq.addAll(adjList[0]);
 			
 			double sum = 0;
 			int pick = 0;
 			
-			for(int i = 0; i < E; i++) {
-				int px = findset((int) dist[i][0]);
-				int py = findset((int) dist[i][1]);
+			while(pick != V) {
+				Edge e = pq.poll();
 				
-				if(px != py) {
-					union(px, py);
-					sum += dist[i][2];
-					pick++;
-				}
+				if(visited[e.ed]) continue;
 				
-				if(pick == (V - 1)) break;
+				if(pick != 0)
+					sum += e.w;
+				pq.addAll(adjList[e.ed]);
+				visited[e.ed] = true;
+				pick++;
 			}
 			
 			System.out.println("#" + tc + " " + Math.round(sum));
 		}
 	}
 	
-	public static int findset(int x) {
-		if(x != p[x])
-			p[x] = findset(p[x]);
-		return p[x];
-	}
+	
+	static class Edge implements Comparable<Edge>{
+		int st, ed;
+		double w;
+		
+		public Edge(int st, int ed, double w) {
+			this.st = st;
+			this.ed = ed;
+			this.w = w;
+		}
 
-    public static void union(int x, int y) {
-        p[y] = x;
-    }
+		public int compareTo(Edge o) {
+			return Double.compare(this.w, o.w);
+		}
+	}
 }
