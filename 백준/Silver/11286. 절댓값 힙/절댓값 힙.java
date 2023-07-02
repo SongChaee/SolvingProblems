@@ -5,45 +5,56 @@ import java.util.PriorityQueue;
 public class Main {
 	public static void main(String[] args) throws Exception {
 		StringBuilder sb = new StringBuilder();
-		PriorityQueue<Integer> qp = new PriorityQueue<>();
-		PriorityQueue<Integer> qn = new PriorityQueue<>();		
 		
-		// 숫자 개수 입력
+		// 연산의 개수 입력
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		int N = Integer.parseInt(br.readLine());
 		
-		// 숫자 N개 입력
+		// 정수 N개 입력
+		PriorityQueue<Node> q = new PriorityQueue<>();
 		for(int i = 0; i < N; i++) {
-			int input = Integer.parseInt(br.readLine());
-			// 숫자 출력
-			if(input == 0) {
-				int p = 0;
-				int n = 0;
-				if(qp.isEmpty() && qn.isEmpty())
+			int n = Integer.parseInt(br.readLine());
+			
+			// 절댓값이 가장 작은 값 출력, 해당 값 제거
+			if(n == 0) {
+				if(q.isEmpty())
 					sb.append("0\n");
-				else if(qp.isEmpty())
-					sb.append(-qn.poll() + "\n");
-				else if(qn.isEmpty())
-					sb.append(qp.poll() + "\n");
 				else {
-					p = qp.peek();
-					n = qn.peek();
-					if(p < n)
-						sb.append(qp.poll() + "\n");
+					if(q.peek().sign == 1)
+						sb.append(q.poll().value + "\n");
 					else
-						sb.append(-qn.poll() + "\n");
+						sb.append(-q.poll().value + "\n");
 				}
 			}
-			// 큐에 숫자 삽입
+			// 큐에 값 삽입
 			else {
-				if(input < 0)
-					qn.add(-input);
+				if(n > 0)
+					q.add(new Node(n, 1));
 				else
-					qp.add(input);
+					q.add(new Node(-n, -1));
 			}
 		}
 		
 		// 결과 출력
 		System.out.print(sb.toString());
+	}
+
+}
+
+class Node implements Comparable<Node>{
+	int value;
+	int sign;
+	
+	public Node(int value, int sign) {
+		this.value = value;
+		this.sign = sign;
+	}
+	
+	@Override
+	public int compareTo(Node n) {
+		if(value == n.value) {
+			return sign - n.sign;
+		}
+		return value - n.value;
 	}
 }
